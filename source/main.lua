@@ -13,7 +13,7 @@ function playdate.update()
     SceneManager:update()
 
     if Globals.debug then
-        playdate.drawFPS(5, 5)
+        playdate.drawFPS(2, 2)
     end
 
 end

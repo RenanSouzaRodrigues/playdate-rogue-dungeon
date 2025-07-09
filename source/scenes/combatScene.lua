@@ -40,9 +40,15 @@ function CurrentEnemy:init()
 
     CurrentEnemy.sprite, error = playdate.graphics.sprite.new(enemy_image_reference)
     assert(CurrentEnemy.sprite, error)
+
+    CurrentEnemy.sprite:setCenter(Globals.game_values.sprite_botton_middle.x, Globals.game_values.sprite_botton_middle.y)
+    CurrentEnemy.sprite:moveTo(CurrentEnemy.position.x, CurrentEnemy.position.y)
+    CurrentEnemy.sprite:add()
 end
 
 function CurrentEnemy:update()
+    local enemy_y_scale = Globals:calculate_idle("enemy")
+    CurrentEnemy.sprite:setScale(1, enemy_y_scale)
 end
 
 
@@ -57,7 +63,7 @@ UIElements = {}
 -- ==========================================================
 -- Current Enemy Properties
 -- ==========================================================
-CombatScene = {scene_manager = nil, combat_song = nil, background = nil}
+CombatScene = {scene_manager = nil, combat_song = nil, background = nil, state = "default"}
 
 function CombatScene:build(scene_manager)
     CombatScene.scene_manager = scene_manager
@@ -71,30 +77,11 @@ function CombatScene:build(scene_manager)
     
     CombatScene.background, error = playdate.graphics.image.new(Globals.assets.images.arena)
     assert(CombatScene.background, error)
-
-    playdate.graphics.setBackgroundColor(playdate.graphics.kColorClear)
-
-    CombatScene.player.image, error = playdate.graphics.image.new(Globals.assets.sprites.player)
-    assert(CombatScene.player.image, error)
-    CombatScene.player.sprite, error = playdate.graphics.sprite.new(CombatScene.player.image)
-    assert(CombatScene.player.sprite, error)
-    CombatScene.player.sprite:setCenter(0.5, 1)
-    CombatScene.player.sprite:moveTo(CombatScene.player.position.x, CombatScene.player.position.y)
-    CombatScene.player.sprite:add()
-
-    CombatScene.current_enemy.image, error = playdate.graphics.image.new(Globals.assets.sprites.enemy_bird)
-    assert(CombatScene.current_enemy.image, error)
-    CombatScene.current_enemy.sprite, error = playdate.graphics.sprite.new(CombatScene.current_enemy.image)
-    assert(CombatScene.current_enemy.sprite, error)
-    CombatScene.current_enemy.sprite:setCenter(0.5, 1)
-    CombatScene.current_enemy.sprite:moveTo(CombatScene.current_enemy.position.x, CombatScene.current_enemy.position.y)
-    CombatScene.current_enemy.sprite:add()
 end
 
 function CombatScene:update()
-    local enemy_y_scale =  Globals:calculate_idle("enemy")
-
     playdate.graphics.clear(playdate.graphics.kColorBlack)
+
     CombatScene.background:draw(0, 0)
 
     Player:update()
