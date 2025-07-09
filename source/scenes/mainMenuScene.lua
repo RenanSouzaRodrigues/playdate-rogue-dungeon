@@ -1,0 +1,3 @@
+MainMenuScene = {}
+
+return MainMenuScene
