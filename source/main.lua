@@ -3,7 +3,7 @@ import "CoreLibs/object"
 import "CoreLibs/graphics"
 import "CoreLibs/sprites"
 import "CoreLibs/timer"
-import "globals"
+import "tools/globals"
 import "sceneManager"
 
 SceneManager:build_scene()
