@@ -1,0 +1,44 @@
+Globals = {}
+
+Globals.debug = true;
+
+Globals.assets = {
+    images = { 
+        studio_logo = "assets/images/dsl_playdate.png",
+        arena = "assets/images/arena.png"
+    },
+    sprites = { 
+        player = "assets/sprites/player_placeholder.png",
+        enemy_bird = "assets/sprites/enemy_bird_placeholder.png",
+        attack_button_white = "assets/sprites/attack_button_white.png",
+        attack_button_black = "assets/sprites/attack_button_black.png",
+        magic_button_white = "assets/sprites/magic_button_white.png",
+        magic_button_black = "assets/sprites/magic_button_black.png",
+        items_button_white = "assets/sprites/items_button_white.png",
+        items_button_black = "assets/sprites/items_button_black.png",
+    },
+    musics = {
+        combat_song = "assets/sounds/combat_song"
+    },
+    sounds = {}
+}
+
+Globals.game_values = {
+    logo_duration = 4,
+    half_X = 400/2,
+    half_Y = 240/2,
+    idle_max_scale = 1,
+    idle_min_scale = 0.92,
+    sprite_botton_middle = {x = 0.5, y = 1},
+}
+
+function Globals:calculate_idle(type)
+    local speed_value
+    if type == "player" then speed_value = 4 else speed_value = 5 end
+    
+    -- https://www.youtube.com/watch?v=Qsv4_xOkh4M
+    return
+        ((Globals.game_values.idle_max_scale + Globals.game_values.idle_min_scale) / 2) +
+        (((Globals.game_values.idle_max_scale - Globals.game_values.idle_min_scale) / 2) *
+        math.sin(playdate.getElapsedTime() * speed_value))
+end
