@@ -79,15 +79,22 @@ function CombatScene:build()
     CurrentEnemy:init()
 end
 
-function CombatScene:update()
-    playdate.graphics.clear(playdate.graphics.kColorBlack)
-
-    CombatScene.background:draw(0, 0)
-
+function CombatScene:update_entities()
     Player:update()
     CurrentEnemy:update()
-
     playdate.graphics.sprite.update()
+end
+
+function CombatScene:update()
+    playdate.graphics.clear(playdate.graphics.kColorClear)
+    playdate.graphics.setBackgroundColor(playdate.graphics.kColorClear)
+    CombatScene.background:draw(0, 0)
+
+    CombatScene:update_entities()
+
+    -- TODO Render the UIElements
+
+    -- TODO Handle the game state
 end
 
 return CombatScene
