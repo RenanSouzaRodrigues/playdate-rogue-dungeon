@@ -63,12 +63,9 @@ UIElements = {}
 -- ==========================================================
 -- Current Enemy Properties
 -- ==========================================================
-CombatScene = {scene_manager = nil, combat_song = nil, background = nil, state = "default"}
+CombatScene = {combat_song = nil, background = nil, state = "default"}
 
-function CombatScene:build(scene_manager)
-    CombatScene.scene_manager = scene_manager
-    assert(LogoScene.scene_manager, "Scene Manager is null or invalid at CombatScene")
-
+function CombatScene:build()
     -- Play the scene background music. There is no logic yet to handle music settings or any thing like
     -- that yet, but for the moment, I don't really care that much. -Renan
     CombatScene.combat_song, error = playdate.sound.fileplayer.new(Globals.assets.musics.combat_song)
@@ -77,6 +74,9 @@ function CombatScene:build(scene_manager)
     
     CombatScene.background, error = playdate.graphics.image.new(Globals.assets.images.arena)
     assert(CombatScene.background, error)
+
+    Player:init()
+    CurrentEnemy:init()
 end
 
 function CombatScene:update()

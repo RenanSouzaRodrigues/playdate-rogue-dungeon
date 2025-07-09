@@ -13,7 +13,7 @@ function SceneManager:build_scene()
         print("Current scene intex is invalid. Current scene Index: ", SceneManager.current_active_scene_index)
         return
     end
-    SceneManager.game_scenes[SceneManager.current_active_scene_index]:build(SceneManager)
+    SceneManager.game_scenes[SceneManager.current_active_scene_index]:build()
 end
 
 function SceneManager:open_scene(scene_index) 

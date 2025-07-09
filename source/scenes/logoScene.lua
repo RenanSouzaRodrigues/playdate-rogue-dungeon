@@ -1,32 +1,44 @@
-LogoScene = {
-    scene_manager = nil,
-    logo = nil,
-    current_time = nil,
-    time_until_next_scene = nil,
-}
+LogoScene = {logo = nil, logo_alpha = 0, current_time = 0, time_to_await = 0, sound = nil, sound_played = false, state = "fadeIn" }
 
-function LogoScene:build(scene_manager)    
-    -- Scene manager reference is needed in all the scenes because I need a way to control the current scene display -Dallai
-    LogoScene.scene_manager = scene_manager
-    assert(LogoScene.scene_manager, "Scene Manager is null or invalid at LogoScene")
-
+function LogoScene:build()
     -- just a small counter to display the studio logo for some amount of time -Dallai
-    LogoScene.current_time = playdate.getElapsedTime()
-    LogoScene.time_until_next_scene = LogoScene.current_time + Globals.game_values.logo_duration
-
     LogoScene.logo, error = playdate.graphics.image.new(Globals.assets.images.studio_logo)
     assert(LogoScene.logo, error)
 
-    playdate.graphics.clear(playdate.graphics.kColorBlack)
-    LogoScene.logo:draw(0, 0)
+    LogoScene.sound, error = playdate.sound.sampleplayer.new(Globals.assets.sounds.logo_sound)
+    assert(LogoScene.sound, error)
+
+    LogoScene.current_time = playdate.getElapsedTime()
+    LogoScene.time_to_await = LogoScene.current_time + Globals.game_values.logo_duration
 end
 
 function LogoScene:update()
-    if LogoScene.current_time >= LogoScene.time_until_next_scene then
-        playdate.graphics.clear(playdate.graphics.kColorBlack)
-        LogoScene.scene_manager:open_scene(2) -- define the next scene    
+    playdate.graphics.clear(playdate.graphics.kColorBlack)
+
+    if not LogoScene.sound_played then
+        LogoScene.sound:play() 
+        LogoScene.sound_played = true
     end
-    LogoScene.current_time = playdate.getElapsedTime()
+
+    if LogoScene.state == "fadeIn" then
+        LogoScene.logo:drawFaded(0, 0, LogoScene.logo_alpha, playdate.graphics.image.kDitherTypeAtkinson)
+        LogoScene.logo_alpha += 0.05
+        if LogoScene.logo_alpha >= 1 then LogoScene.state = "wait" end
+        return
+    end
+
+    if LogoScene.state == "wait" then
+        LogoScene.logo:draw(0,0)
+        if LogoScene.current_time >= LogoScene.time_to_await then LogoScene.state = "fadeOut" end
+        LogoScene.current_time = playdate.getElapsedTime()
+        return
+    end
+    
+    if LogoScene.state == "fadeOut" then
+        LogoScene.logo:drawFaded(0, 0, LogoScene.logo_alpha, playdate.graphics.image.kDitherTypeAtkinson)
+        LogoScene.logo_alpha -= 0.05
+        if LogoScene.logo_alpha <= 0 then SceneManager:open_scene(2) end
+    end
 end
 
 return LogoScene

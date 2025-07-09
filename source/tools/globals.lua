@@ -20,11 +20,13 @@ Globals.assets = {
     musics = {
         combat_song = "assets/sounds/combat_song"
     },
-    sounds = {}
+    sounds = {
+        logo_sound = "assets/sounds/logo_sound"
+    }
 }
 
 Globals.game_values = {
-    logo_duration = 4,
+    logo_duration = 2,
     half_X = 400/2,
     half_Y = 240/2,
     idle_max_scale = 1,
