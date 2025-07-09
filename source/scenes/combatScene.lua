@@ -132,8 +132,6 @@ function CombatScene:update()
 
     CombatScene:update_entities()
 
-    -- TODO Render the UIElements
-
     -- TODO Handle the game state
 end
 
