@@ -35,6 +35,11 @@ CurrentEnemy = {
 }
 
 function CurrentEnemy:init()
+    local enemy_image_reference, error = playdate.graphics.image.new(Globals.assets.sprites.enemy_bird)
+    assert(enemy_image_reference, error)
+
+    CurrentEnemy.sprite, error = playdate.graphics.sprite.new(enemy_image_reference)
+    assert(CurrentEnemy.sprite, error)
 end
 
 function CurrentEnemy:update()
