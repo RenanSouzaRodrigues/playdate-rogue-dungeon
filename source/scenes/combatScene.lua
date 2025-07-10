@@ -59,7 +59,7 @@ end
 local ui_elements = {
     attack_button = {black = nil, white = nil, sprite = nil, is_active = true, position = {x = Globals.game_values.half_X, y = Globals.game_values.half_Y}},
     magic_button = {black = nil, white = nil, sprite = nil, is_active = false, position = {x = Globals.game_values.half_X, y = Globals.game_values.half_Y - 40}},
-    items_button = {black = nil, white = nil, sprite = nil, is_active = false, position = {x = Globals.game_values.half_X, y = Globals.game_values.half_Y + 45}}
+    items_button = {black = nil, white = nil, sprite = nil, is_active = false, position = {x = Globals.game_values.half_X, y = Globals.game_values.half_Y + 40}}
 }
 
 function ui_elements:init()
@@ -94,7 +94,59 @@ function ui_elements:init()
     ui_elements.items_button.sprite:add()
 end
 
+function ui_elements:select_button(button)
+    if not button then print("button is invalid", button) return end
+
+    button.is_active = true
+    button.sprite:setImage(button.white, 0, Globals.game_values.button_active_scale)
+end
+
+function ui_elements:deselect_button(button)
+    if not button then print("button is invalid", button) return end
+
+    button.is_active = false
+    button.sprite:setImage(button.black, 0, Globals.game_values.button_default_scale)
+end
+
+function ui_elements:handle_buttons()
+    -- when the player releases the up button -Renan
+    if playdate.buttonJustReleased(playdate.kButtonUp) then
+        print("up button released")
+        if ui_elements.magic_button.is_active then return end
+
+        if ui_elements.attack_button.is_active then
+            ui_elements:deselect_button(ui_elements.attack_button)
+            ui_elements:select_button(ui_elements.magic_button)
+            -- TODO: play the ui sound
+        end
+
+        if ui_elements.items_button.is_active then
+            ui_elements:deselect_button(ui_elements.items_button)
+            ui_elements:select_button(ui_elements.attack_button)
+            -- TODO: play the ui sound
+        end
+    end
+
+    if playdate.buttonJustReleased(playdate.kButtonDown) then
+        print("down button released")
+        if ui_elements.items_button.is_active then return end
+
+        if ui_elements.attack_button.is_active then
+            ui_elements:deselect_button(ui_elements.attack_button)
+            ui_elements:select_button(ui_elements.items_button)
+            -- TODO: play the ui sound
+        end
+
+        if ui_elements.magic_button.is_active then
+            ui_elements:deselect_button(ui_elements.magic_button)
+            ui_elements:select_button(ui_elements.attack_button)
+            -- TODO: play the ui sound
+        end
+    end
+end
+
 function ui_elements:update()
+    ui_elements:handle_buttons()
 end
 
 
