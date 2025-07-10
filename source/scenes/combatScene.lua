@@ -1,3 +1,5 @@
+local fight_alert_animation = {alpha=0, scale=2, timer=0}
+
 -- ==========================================================
 -- Player Properties
 -- ==========================================================
@@ -180,7 +182,7 @@ end
 -- ==========================================================
 -- Current Enemy Properties
 -- ==========================================================
-CombatScene = {combat_song = nil, background = nil, state = "generate_encouter", dungeon_level = 1, fight_logo = nil}
+CombatScene = {combat_song = nil, background = nil, state = "pre-combat", dungeon_level = 1, fight_logo = nil, alpha = 0, scale = 1}
 
 function CombatScene:build()
     -- Play the scene background music. There is no logic yet to handle music settings or any thing like
@@ -193,6 +195,7 @@ function CombatScene:build()
     assert(CombatScene.background, error)
 
     CombatScene.fight_logo, error = playdate.graphics.image.new(Globals.assets.sprites.fight_logo)
+    assert(CombatScene.fight_logo, error)
 
     player:init()
     ui_elements:init()
@@ -207,12 +210,23 @@ function CombatScene:generate_encounter()
     print("state is now combat")
 end
 
+function CombatScene:animate_fight_logo()
+    CombatScene.fight_logo
+        :fadedImage(CombatScene.alpha, playdate.graphics.image.kDitherTypeAtkinson)
+        :scaledImage(CombatScene.scale)
+        :drawCentered(Globals.game_values.half_X, Globals.game_values.half_Y)
+
+    if CombatScene.scale < 3 then CombatScene.scale += 0.02 end
+
+    CombatScene.alpha += 0.01
+end
+
 function CombatScene:update()
     playdate.graphics.clear(playdate.graphics.kColorClear)
     playdate.graphics.setBackgroundColor(playdate.graphics.kColorClear)
     CombatScene.background:draw(0, 0)
 
-    player:update()
+    -- player:update()
 
     if CombatScene.state == "generate_encouter" then
         CombatScene:generate_encounter()
@@ -220,7 +234,8 @@ function CombatScene:update()
     end
 
     if CombatScene.state == "pre-combat" then
-        
+        CombatScene:animate_fight_logo()
+        return
     end
 
     if CombatScene.state == "combat" then
