@@ -36,7 +36,7 @@ local current_enemy = {
 }
 
 function current_enemy:init()
-    local enemy_image_reference, error = playdate.graphics.image.new(Globals.assets.sprites.enemy_bird)
+    local enemy_image_reference, error = playdate.graphics.image.new(Globals.assets.sprites.chicken_enemy)
     assert(enemy_image_reference, error)
 
     current_enemy.sprite, error = playdate.graphics.sprite.new(enemy_image_reference)
@@ -166,7 +166,7 @@ end
 -- ==========================================================
 -- Current Enemy Properties
 -- ==========================================================
-CombatScene = {combat_song = nil, background = nil, state = "begin"}
+CombatScene = {combat_song = nil, background = nil, state = "generate_encouter"}
 
 function CombatScene:build()
     -- Play the scene background music. There is no logic yet to handle music settings or any thing like
@@ -183,21 +183,26 @@ function CombatScene:build()
     current_enemy:init()
 end
 
+function CombatScene:generate_encounter()
+
+end
+
 function CombatScene:update()
     playdate.graphics.clear(playdate.graphics.kColorClear)
     playdate.graphics.setBackgroundColor(playdate.graphics.kColorClear)
     CombatScene.background:draw(0, 0)
 
-    if CombatScene.state == "begin" then
+    player:update()
+
+    if CombatScene.state == "generate_encouter" then
 
     end
 
-    -- if CombatScene.state == "generate_encounter" then
-
-    -- end
+    if CombatScene.state == "combat" then
+    
+    end 
 
     ui_elements:update()
-    player:update()
     current_enemy:update()
 end
 
