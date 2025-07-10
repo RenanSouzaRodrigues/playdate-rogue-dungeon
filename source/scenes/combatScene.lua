@@ -22,6 +22,7 @@ end
 function player:update()
     local player_y_scale = Globals:calculate_idle("player")
     player.sprite:setScale(1, player_y_scale)
+    player.sprite:update()
 end
 
 
@@ -49,6 +50,7 @@ end
 function current_enemy:update()
     local enemy_y_scale = Globals:calculate_idle("enemy")
     current_enemy.sprite:setScale(1, enemy_y_scale)
+    current_enemy.sprite:update()
 end
 
 
@@ -95,15 +97,11 @@ function ui_elements:init()
 end
 
 function ui_elements:select_button(button)
-    if not button then print("button is invalid", button) return end
-
     button.is_active = true
     button.sprite:setImage(button.white, 0, Globals.game_values.button_active_scale)
 end
 
 function ui_elements:deselect_button(button)
-    if not button then print("button is invalid", button) return end
-
     button.is_active = false
     button.sprite:setImage(button.black, 0, Globals.game_values.button_default_scale)
 end
@@ -112,34 +110,46 @@ function ui_elements:handle_buttons()
     -- when the player releases the up button -Renan
     if playdate.buttonJustReleased(playdate.kButtonUp) then
         print("up button released")
-        if ui_elements.magic_button.is_active then return end
+        if ui_elements.magic_button.is_active then
+            ui_elements:deselect_button(ui_elements.magic_button)
+            ui_elements:select_button(ui_elements.items_button)
+            return
+        end
 
         if ui_elements.attack_button.is_active then
             ui_elements:deselect_button(ui_elements.attack_button)
             ui_elements:select_button(ui_elements.magic_button)
+            return
             -- TODO: play the ui sound
         end
 
         if ui_elements.items_button.is_active then
             ui_elements:deselect_button(ui_elements.items_button)
             ui_elements:select_button(ui_elements.attack_button)
+            return
             -- TODO: play the ui sound
         end
     end
 
     if playdate.buttonJustReleased(playdate.kButtonDown) then
         print("down button released")
-        if ui_elements.items_button.is_active then return end
+        if ui_elements.items_button.is_active then
+            ui_elements:deselect_button(ui_elements.items_button)
+            ui_elements:select_button(ui_elements.magic_button)
+            return
+        end
 
         if ui_elements.attack_button.is_active then
             ui_elements:deselect_button(ui_elements.attack_button)
             ui_elements:select_button(ui_elements.items_button)
+            return
             -- TODO: play the ui sound
         end
 
         if ui_elements.magic_button.is_active then
             ui_elements:deselect_button(ui_elements.magic_button)
             ui_elements:select_button(ui_elements.attack_button)
+            return
             -- TODO: play the ui sound
         end
     end
@@ -147,6 +157,9 @@ end
 
 function ui_elements:update()
     ui_elements:handle_buttons()
+    ui_elements.attack_button.sprite:update()
+    ui_elements.magic_button.sprite:update()
+    ui_elements.items_button.sprite:update()
 end
 
 
@@ -170,21 +183,22 @@ function CombatScene:build()
     current_enemy:init()
 end
 
-function CombatScene:update_entities()
-    ui_elements:update()
-    player:update()
-    current_enemy:update()
-    playdate.graphics.sprite.update()
-end
-
 function CombatScene:update()
     playdate.graphics.clear(playdate.graphics.kColorClear)
     playdate.graphics.setBackgroundColor(playdate.graphics.kColorClear)
     CombatScene.background:draw(0, 0)
 
-    CombatScene:update_entities()
+    if CombatScene.state == "begin" then
 
-    -- TODO Handle the game state
+    end
+
+    -- if CombatScene.state == "generate_encounter" then
+
+    -- end
+
+    ui_elements:update()
+    player:update()
+    current_enemy:update()
 end
 
 return CombatScene
