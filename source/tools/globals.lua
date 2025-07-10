@@ -16,7 +16,8 @@ Globals.assets = {
         magic_button_white = "assets/sprites/magic_button_white.png",
         items_button_black = "assets/sprites/items_button_black.png",
         items_button_white = "assets/sprites/items_button_white.png",
-        seller = "assets/sprites/seller.png"
+        seller = "assets/sprites/seller.png",
+        fight_logo = "assets/sprites/fight_logo.png"
     },
     musics = {
         combat_song = "assets/sounds/combat_song"

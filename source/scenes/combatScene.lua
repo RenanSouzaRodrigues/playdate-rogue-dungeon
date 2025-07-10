@@ -30,13 +30,27 @@ end
 -- ==========================================================
 -- Current Enemy Properties
 -- ==========================================================
+local temporary_enemy = {}
+
 local current_enemy = {
-    position = {x = 320, y = Globals.game_values.half_Y + 32}, life = 0, max_life = 0, mana = 0, max_mana = 0, sprite = nil, state = "idle",
-    attacks = 0, max_attacks = 0
+    position = {x = 320, y = Globals.game_values.half_Y + 32},
+    level = 0,
+    hp = 0,
+    min_damage = 0,
+    max_damage = 0, 
+    defense = 0, 
+    sprite = nil, 
+    state = "idle",
 }
 
 function current_enemy:init()
-    local enemy_image_reference, error = playdate.graphics.image.new(Globals.assets.sprites.chicken_enemy)
+    current_enemy.level = temporary_enemy.level
+    current_enemy.hp = temporary_enemy.hp
+    current_enemy.min_damage = temporary_enemy.min_damage
+    current_enemy.max_damage = temporary_enemy.max_damage
+    current_enemy.defense = temporary_enemy.defense
+
+    local enemy_image_reference, error = playdate.graphics.image.new(temporary_enemy.image)
     assert(enemy_image_reference, error)
 
     current_enemy.sprite, error = playdate.graphics.sprite.new(enemy_image_reference)
@@ -166,7 +180,7 @@ end
 -- ==========================================================
 -- Current Enemy Properties
 -- ==========================================================
-CombatScene = {combat_song = nil, background = nil, state = "generate_encouter"}
+CombatScene = {combat_song = nil, background = nil, state = "generate_encouter", dungeon_level = 1, fight_logo = nil}
 
 function CombatScene:build()
     -- Play the scene background music. There is no logic yet to handle music settings or any thing like
@@ -174,17 +188,23 @@ function CombatScene:build()
     CombatScene.combat_song, error = playdate.sound.fileplayer.new(Globals.assets.musics.combat_song)
     assert(CombatScene.combat_song, error)
     if not CombatScene.combat_song:isPlaying() then CombatScene.combat_song:play(0) end
-    
+
     CombatScene.background, error = playdate.graphics.image.new(Globals.assets.images.arena)
     assert(CombatScene.background, error)
 
-    ui_elements:init()
+    CombatScene.fight_logo, error = playdate.graphics.image.new(Globals.assets.sprites.fight_logo)
+
     player:init()
-    current_enemy:init()
+    ui_elements:init()
 end
 
 function CombatScene:generate_encounter()
-
+    temporary_enemy = Enemies:get_random_enemy_by_dungeon_floor(CombatScene.dungeon_level)
+    printTable(temporary_enemy)
+    assert(temporary_enemy, "generated enemy is nil or invalid")
+    current_enemy.init(temporary_enemy)
+    CombatScene.state = "combat"
+    print("state is now combat")
 end
 
 function CombatScene:update()
@@ -195,15 +215,18 @@ function CombatScene:update()
     player:update()
 
     if CombatScene.state == "generate_encouter" then
+        CombatScene:generate_encounter()
+        return
+    end
 
+    if CombatScene.state == "pre-combat" then
+        
     end
 
     if CombatScene.state == "combat" then
-    
-    end 
-
-    ui_elements:update()
-    current_enemy:update()
+        current_enemy:update()
+        ui_elements:update()
+    end
 end
 
 return CombatScene

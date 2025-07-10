@@ -7,9 +7,12 @@ Enemies = {
 
 function Enemies:get_random_enemy_by_dungeon_floor(dungeon_floor)
     local monsters = {}
-    for monster in Enemies.common do
-        if monster.level == dungeon_floor then table.insert(monsters, monster) end
+    for index = 1, #Enemies.common do
+        if Enemies.common[index].level == dungeon_floor then table.insert(monsters, Enemies.common[index]) end
     end
+    local max = table.getsize(monsters)
+    local randomIndex = math.random(1, max)
+    return Enemies.common[randomIndex]
 end
 
 return Enemies

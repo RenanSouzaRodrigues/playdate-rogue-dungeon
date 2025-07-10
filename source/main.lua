@@ -5,6 +5,7 @@ import "CoreLibs/sprites"
 import "CoreLibs/timer"
 import "tools/globals"
 import "sceneManager"
+import "enemies"
 
 SceneManager:build_scene()
 
