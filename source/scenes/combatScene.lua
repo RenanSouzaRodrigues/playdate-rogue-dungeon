@@ -182,7 +182,7 @@ end
 -- ==========================================================
 -- Current Enemy Properties
 -- ==========================================================
-CombatScene = {combat_song = nil, background = nil, state = "generate_encouter", dungeon_level = 1, fight_logo = nil, alpha = 0, scale = 1}
+CombatScene = {combat_song = nil, state = "generate_encouter", dungeon_level = 1, fight_logo = nil, alpha = 0, scale = 1}
 
 function CombatScene:build()
     -- Play the scene background music. There is no logic yet to handle music settings or any thing like
@@ -190,9 +190,6 @@ function CombatScene:build()
     CombatScene.combat_song, error = playdate.sound.fileplayer.new(Globals.assets.musics.combat_song)
     assert(CombatScene.combat_song, error)
     if not CombatScene.combat_song:isPlaying() then CombatScene.combat_song:play(0) end
-
-    CombatScene.background, error = playdate.graphics.image.new(Globals.assets.images.arena)
-    assert(CombatScene.background, error)
 
     CombatScene.fight_logo, error = playdate.graphics.image.new(Globals.assets.sprites.fight_logo)
     assert(CombatScene.fight_logo, error)
