@@ -182,7 +182,7 @@ end
 -- ==========================================================
 -- Current Enemy Properties
 -- ==========================================================
-CombatScene = {combat_song = nil, background = nil, state = "pre-combat", dungeon_level = 1, fight_logo = nil, alpha = 0, scale = 1}
+CombatScene = {combat_song = nil, background = nil, state = "generate_encouter", dungeon_level = 1, fight_logo = nil, alpha = 0, scale = 1}
 
 function CombatScene:build()
     -- Play the scene background music. There is no logic yet to handle music settings or any thing like
@@ -206,12 +206,12 @@ function CombatScene:generate_encounter()
     printTable(temporary_enemy)
     assert(temporary_enemy, "generated enemy is nil or invalid")
     current_enemy.init(temporary_enemy)
-    CombatScene.state = "combat"
-    print("state is now combat")
+    CombatScene.state = "pre-combat"
+    print("state is now pre-combat")
 end
 
 function CombatScene:animate_fight_logo()
-    if CombatScene.scale >= 3 then 
+    if CombatScene.scale >= 2 then 
         CombatScene.state = "combat"
         return
     end
@@ -221,7 +221,7 @@ function CombatScene:animate_fight_logo()
         :scaledImage(CombatScene.scale)
         :drawCentered(Globals.game_values.half_X, Globals.game_values.half_Y)
 
-    if CombatScene.scale < 3 then CombatScene.scale += 0.02 end
+    if CombatScene.scale < 2 then CombatScene.scale += 0.02 end
 
     CombatScene.alpha += 0.05
 end
@@ -241,10 +241,12 @@ function CombatScene:update()
     end
 
     if CombatScene.state == "combat" then
-        CombatScene.background:draw(0, 0)
+        playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
         player:update()
         current_enemy:update()
         ui_elements:update()
+        playdate.graphics.drawText("Life: " .. player.life .. "/" .. player.max_life, 10, 190)
+        playdate.graphics.drawText("Mana: " .. player.mana .. "/" .. player.max_mana, 10, 210)
     end
 end
 
