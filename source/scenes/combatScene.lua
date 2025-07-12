@@ -211,6 +211,11 @@ function CombatScene:generate_encounter()
 end
 
 function CombatScene:animate_fight_logo()
+    if CombatScene.scale >= 3 then 
+        CombatScene.state = "combat"
+        return
+    end
+
     CombatScene.fight_logo
         :fadedImage(CombatScene.alpha, playdate.graphics.image.kDitherTypeAtkinson)
         :scaledImage(CombatScene.scale)
@@ -218,15 +223,12 @@ function CombatScene:animate_fight_logo()
 
     if CombatScene.scale < 3 then CombatScene.scale += 0.02 end
 
-    CombatScene.alpha += 0.01
+    CombatScene.alpha += 0.05
 end
 
 function CombatScene:update()
     playdate.graphics.clear(playdate.graphics.kColorClear)
     playdate.graphics.setBackgroundColor(playdate.graphics.kColorClear)
-    CombatScene.background:draw(0, 0)
-
-    -- player:update()
 
     if CombatScene.state == "generate_encouter" then
         CombatScene:generate_encounter()
@@ -239,6 +241,8 @@ function CombatScene:update()
     end
 
     if CombatScene.state == "combat" then
+        CombatScene.background:draw(0, 0)
+        player:update()
         current_enemy:update()
         ui_elements:update()
     end
