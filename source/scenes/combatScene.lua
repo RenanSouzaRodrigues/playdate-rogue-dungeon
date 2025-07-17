@@ -4,7 +4,16 @@ local fight_alert_animation = {alpha=0, scale=2, timer=0}
 -- Player Properties
 -- ==========================================================
 local player = {
-    position = {x = 80, y = Globals.game_values.half_Y + 32}, life = 100, max_life = 100, mana = 20, max_mana = 20, sprite = nil, state = "idle",
+    position = {x = 80, y = Globals.game_values.half_Y + 32},
+    life = 100,
+    max_life = 100,
+    mana = 20,
+    max_mana = 20,
+    damage = 5,
+    defense = 0,
+    status = "good",
+    sprite = nil,
+    state = "idle",
     attacks = 2, max_attacks = 2
 }
 
@@ -39,9 +48,9 @@ local current_enemy = {
     level = 0,
     hp = 0,
     min_damage = 0,
-    max_damage = 0, 
-    defense = 0, 
-    sprite = nil, 
+    max_damage = 0,
+    defense = 0,
+    sprite = nil,
     state = "idle",
 }
 
@@ -67,6 +76,40 @@ function current_enemy:update()
     local enemy_y_scale = Globals:calculate_idle("enemy")
     current_enemy.sprite:setScale(1, enemy_y_scale)
     current_enemy.sprite:update()
+end
+
+
+
+local shop = {sprite = nil, state = "options"}
+
+function shop:init()
+    local seller_image, error = playdate.graphics.image.new(Globals.assets.sprites.seller)
+    assert(seller_image, error)
+
+    shop.sprite, error = playdate.graphics.sprite.new(seller_image)
+    assert(shop.sprite, error)
+
+    shop.sprite:setCenter(Globals.game_values.sprite_botton_middle.x, Globals.game_values.sprite_botton_middle.y)
+    shop.sprite:moveTo(current_enemy.position.x, current_enemy.position.y)
+    shop.sprite:add()
+end
+
+function shop:update()
+    local shop_scale_y = Globals:calculate_idle("enemy")
+    shop.sprite:setScale(1, shop_scale_y)
+    shop.sprite:update()
+
+    if shop.state == "options" then
+
+    end
+
+    if shop.state == "buy" then
+
+    end
+
+    if shop.state == "sell" then
+
+    end
 end
 
 
@@ -182,7 +225,7 @@ end
 -- ==========================================================
 -- Current Enemy Properties
 -- ==========================================================
-CombatScene = {combat_song = nil, state = "generate_encouter", dungeon_level = 1, fight_logo = nil, alpha = 0, scale = 1}
+CombatScene = {combat_song = nil, state = "shop", dungeon_level = 1, fight_logo = nil, alpha = 0, scale = 1}
 
 function CombatScene:build()
     -- Play the scene background music. There is no logic yet to handle music settings or any thing like
@@ -196,6 +239,7 @@ function CombatScene:build()
 
     player:init()
     ui_elements:init()
+    shop:init()
 end
 
 function CombatScene:generate_encounter()
@@ -208,7 +252,7 @@ function CombatScene:generate_encounter()
 end
 
 function CombatScene:animate_fight_logo()
-    if CombatScene.scale >= 2 then 
+    if CombatScene.scale >= 2 then
         CombatScene.state = "combat"
         return
     end
@@ -227,6 +271,12 @@ function CombatScene:update()
     playdate.graphics.clear(playdate.graphics.kColorClear)
     playdate.graphics.setBackgroundColor(playdate.graphics.kColorClear)
 
+    if CombatScene.state == "shop" then
+        shop:update()
+        player:update()
+        return
+    end
+
     if CombatScene.state == "generate_encouter" then
         CombatScene:generate_encounter()
         return
@@ -242,8 +292,14 @@ function CombatScene:update()
         player:update()
         current_enemy:update()
         ui_elements:update()
-        playdate.graphics.drawText("Life: " .. player.life .. "/" .. player.max_life, 10, 190)
-        playdate.graphics.drawText("Mana: " .. player.mana .. "/" .. player.max_mana, 10, 210)
+        playdate.graphics.drawText("HP: " .. player.life .. "/" .. player.max_life, 10, 195)
+        playdate.graphics.drawText("MP: " .. player.mana .. "/" .. player.max_mana, 10, 215)
+        playdate.graphics.drawText("ATK: ".. player.damage, 150, 195)
+        playdate.graphics.drawText("DEF: " .. player.defense, 150, 215)
+        playdate.graphics.drawText("STAT: " .. player.status, 250, 195)
+
+        -- draw the enemy life points. -Dallai
+        playdate.graphics.drawText("HP: " .. current_enemy.hp, 300, 60)
     end
 end
 
