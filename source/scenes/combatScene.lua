@@ -33,7 +33,6 @@ end
 function player:update()
     local player_y_scale = Globals:calculate_idle("player")
     player.sprite:setScale(1, player_y_scale)
-    player.sprite:update()
 end
 
 
@@ -75,7 +74,6 @@ end
 function current_enemy:update()
     local enemy_y_scale = Globals:calculate_idle("enemy")
     current_enemy.sprite:setScale(1, enemy_y_scale)
-    current_enemy.sprite:update()
 end
 
 
@@ -287,19 +285,20 @@ function CombatScene:update()
         return
     end
 
+    playdate.graphics.drawText("HP: " .. player.life .. "/" .. player.max_life, 10, 195)
+    playdate.graphics.drawText("MP: " .. player.mana .. "/" .. player.max_mana, 10, 215)
+    playdate.graphics.drawText("ATK: ".. player.damage, 150, 195)
+    playdate.graphics.drawText("DEF: " .. player.defense, 150, 215)
+    playdate.graphics.drawText("STAT: " .. player.status, 250, 195)
+
+    -- draw the enemy life points. -Dallai
+    playdate.graphics.drawText("HP: " .. current_enemy.hp, 300, 60)
+
     if CombatScene.state == "combat" then
         playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
         player:update()
         current_enemy:update()
         ui_elements:update()
-        playdate.graphics.drawText("HP: " .. player.life .. "/" .. player.max_life, 10, 195)
-        playdate.graphics.drawText("MP: " .. player.mana .. "/" .. player.max_mana, 10, 215)
-        playdate.graphics.drawText("ATK: ".. player.damage, 150, 195)
-        playdate.graphics.drawText("DEF: " .. player.defense, 150, 215)
-        playdate.graphics.drawText("STAT: " .. player.status, 250, 195)
-
-        -- draw the enemy life points. -Dallai
-        playdate.graphics.drawText("HP: " .. current_enemy.hp, 300, 60)
     end
 end
 
